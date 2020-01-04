@@ -1,0 +1,9 @@
+[Unit]
+Description=Update PKGBUILDs on AUR maintained by specific maintainer (on Docker container)
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/docker run --rm IMAGE_NAME
+
+[Install]
+WantedBy=default.target

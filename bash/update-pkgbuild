@@ -1,0 +1,38 @@
+#!/bin/bash
+set -e
+
+function update-pkgver() {
+	PKGVER=$1
+	PKGREL=$2
+
+	if [ -f PKGBUILD ]; then
+		sed -e "s/pkgver=.*/pkgver=${PKGVER}/g" -e "s/pkgrel=.*/pkgrel=${PKGREL}/g" -i PKGBUILD
+	else
+		exit 2
+	fi
+
+	updpkgsums
+	makepkg --printsrcinfo > .SRCINFO
+
+	git add --all
+	git commit --message "Update version to ${PKGVER}-${PKGREL}"
+}
+
+if [[ $# -eq 2 ]]; then
+	PKGNAME=$1
+	PKGVER=$2
+else
+	echo "Usage: $0 PACKAGE_NAME NEW_PKGVER" > /dev/stderr
+	exit 1
+fi
+
+WORKING_DIR=$(mktemp -d /tmp/check-pkgbuild-XXXX)
+AUR_GIT_ORIGIN="ssh://aur@aur.archlinux.org/$PKGNAME.git"
+
+git clone "$AUR_GIT_ORIGIN" "$WORKING_DIR"
+cd "$WORKING_DIR" || exit 2
+
+update-pkgver "$PKGVER" 1
+sudo extra-x86_64-build
+
+git push origin master

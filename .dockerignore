@@ -1,0 +1,6 @@
+*.service
+*.timer
+*.tmpl
+Makefile
+README.md
+Dockerfile
