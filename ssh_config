@@ -1,0 +1,3 @@
+Host aur.archlinux.org
+	IdentityFile ~/.ssh/pribkey
+	User aur

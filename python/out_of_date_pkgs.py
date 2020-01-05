@@ -22,7 +22,7 @@ class OutOfDateAURPackages():
         rpc_query = "/rpc/?v=5&type=info&arg[]={p}".format(p=package_name)
         response = requests.get(self.aur_endpoint + rpc_query).json()
 
-        info = response["results"]
+        info = response["results"][0]
         if info["URL"]:
             upstream = info["URL"]
         else:
@@ -31,23 +31,42 @@ class OutOfDateAURPackages():
 
     def _get_latest_upstream_version(self, package_name):
         url = self._get_upstream_url(package_name)
+        version = None
 
-        if not url:
-            version = None
-        else:
+        if url:
             # In case upstream is hosted in GitHub
             github_patterns = [
-                r"^.*http[s]://github.com/([-_a-zA-Z0-9]*)/([-_a-zA-Z0-9]*)/*"
+                r"^.*http[s]://github.com/([-_a-zA-Z0-9]*)/([-_a-zA-Z0-9]*)/*",
                 r"^http[s]?://([-_a-zA-Z0-9]*).github.io/([-_a-zA-Z0-9]*)/*"
             ]
             for pattern in github_patterns:
                 matched = re.match(pattern, url)
                 if matched:
                     author, repo_name = matched.groups()
-                    github_api_url = ("https://api.github.com/repos/"
-                                      "{a}/{r}/releases/latest").format(
-                                          a=author, r=repo_name)
-                    version = requests.get(github_api_url).json()["tag_name"]
+                    version = self._get_version_from_github(author, repo_name)
+
+        return version
+
+    @staticmethod
+    def _get_version_from_github(author, repo_name):
+        def _get(url):
+            return requests.get(url).json()
+
+        version = None
+
+        repo_url = "https://api.github.com/repos/{a}/{r}".format(
+            a=author, r=repo_name)
+        release_url = repo_url + "/releases/latest"
+
+        response = _get(release_url)
+        try:
+            version = response["tag_name"]
+        except KeyError:
+            if response.get("message") == "Not Found":
+                tags_url = repo_url + "/tags"
+                response = _get(tags_url)
+                if response:
+                    version = response[0]["name"]
 
         return version
 
@@ -72,7 +91,24 @@ class OutOfDateAURPackages():
             upstream_version = self._get_latest_upstream_version(package_name)
 
             if upstream_version:
-                if not self._is_latest_version(package_version,
-                                               upstream_version):
+                version_with_prefix = re.match(r"^v(er)?(\\.)?([.0-9]*)",
+                                               upstream_version)
+                if version_with_prefix:
+                    upstream_version = version_with_prefix.groups()[-1]
+
+                if self._is_latest_version(package_version, upstream_version):
+                    message = "{p} is up-to-date: {v}".format(
+                        p=package_name, v=package_version
+                    )
+                else:
+                    message = ("Version {u} is released in upstream of {p} "
+                               "(current: {v})").format(p=package_name,
+                                                        v=package_version,
+                                                        u=upstream_version)
                     self.out_of_date_packages[package_name] = upstream_version
+            else:
+                message = "Failed to get upstream version for {p}".format(
+                    p=package_name
+                )
+            print(message)
         return self.out_of_date_packages.items()

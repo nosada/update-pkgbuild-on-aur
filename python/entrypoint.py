@@ -22,13 +22,13 @@ from pkgbuild import update_pkgbuild
 from slack import SlackWebhook
 
 
-if not os.environ["MAINTEINER"]:
+if "MAINTAINER" not in os.environ:
     sys.stderr.write(
         "Enviromnet variable 'MAINTAINNER' must be set before running\n"
     )
     sys.exit(errno.ENOENT)
 
-if not os.environ["SLACK_WEBHOOK_URL"]:
+if "SLACK_WEBHOOK_URL" not in os.environ:
     sys.stderr.write(
         "Enviromnet variable 'SLACK_WEBHOOK_URL' must be set before running\n"
     )
@@ -36,7 +36,7 @@ if not os.environ["SLACK_WEBHOOK_URL"]:
 
 
 if __name__ == "__main__":
-    MAINTAINER = os.environ["MAINTEINER"]
+    MAINTAINER = os.environ["MAINTAINER"]
     SLACK_WEBHOOK_URL = os.environ["SLACK_WEBHOOK_URL"]
 
     AUR = OutOfDateAURPackages(MAINTAINER)

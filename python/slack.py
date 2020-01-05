@@ -4,6 +4,12 @@ import slackweb
 class SlackWebhook():
     def __init__(self, slack_webhook_url):
         self.slack = slackweb.Slack(url=slack_webhook_url)
+        self.message_template = """
+{h}
+*stdout*
+```{o}```
+*stderr*
+```{e}```"""
 
     def post_package_upgraded(self, pkgname, pkgver,
                               returncode, stdout, stderr):
@@ -13,12 +19,11 @@ class SlackWebhook():
             stderr = stderr.decode()
 
         if returncode != 0:
-            result = ("Failed to build package with PKGBUILD of {p} {v}: "
-                      "stdout={o}, stderr={e}").format(
-                          p=pkgname, v=pkgver, o=stderr, e=stderr)
+            header = "Failed to build package from PKGBUILD..."
         else:
-            result = "Package {p} is updated to version {v}".format(
-                p=pkgname, v=pkgver
+            header = (
+                "Succeeded to build package from PKGBUILD! "
+                "New version will be pushed to AUR."
             )
 
         attachments = []
@@ -35,15 +40,15 @@ class SlackWebhook():
                     "title": "Package Version in AUR",
                     "value": pkgver,
                     "short": True
-                },
-                {
-                    "title": "Message",
-                    "value": result,
-                    "short": False
-                },
+                }
             ]
         }
         attachments.append(attachment)
         self.slack.notify(attachments=attachments,
+                          text=self.message_template.format(
+                              h=header,
+                              o=stdout,
+                              e=stderr
+                          ),
                           username="AUR package update",
-                          icon_emoji=":mag:")
+                          icon_emoji=":up:")
