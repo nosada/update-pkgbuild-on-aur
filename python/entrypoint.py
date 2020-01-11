@@ -13,6 +13,7 @@ Notes:
                              your package
 """
 
+from docopt import docopt
 import errno
 import os
 import sys
@@ -36,6 +37,8 @@ if "SLACK_WEBHOOK_URL" not in os.environ:
 
 
 if __name__ == "__main__":
+    docopt(__doc__)
+
     MAINTAINER = os.environ["MAINTAINER"]
     SLACK_WEBHOOK_URL = os.environ["SLACK_WEBHOOK_URL"]
 
