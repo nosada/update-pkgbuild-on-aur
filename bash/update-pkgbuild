@@ -26,7 +26,7 @@ else
 	exit 1
 fi
 
-WORKING_DIR=$(mktemp -d /tmp/check-pkgbuild-XXXX)
+WORKING_DIR=$(mktemp -d /tmp/update-pkgbuild-XXXX)
 AUR_GIT_ORIGIN="ssh://aur@aur.archlinux.org/$PKGNAME.git"
 
 git clone "$AUR_GIT_ORIGIN" "$WORKING_DIR"

@@ -45,6 +45,11 @@ class OutOfDateAURPackages():
                     author, repo_name = matched.groups()
                     version = self._get_version_from_github(author, repo_name)
 
+        if version:
+            version_with_prefix = re.match(r"^v(er)?(\\.)?([.0-9]*)",
+                                           version)
+            if version_with_prefix:
+                version = version_with_prefix.groups()[-1]
         return version
 
     @staticmethod
@@ -75,8 +80,8 @@ class OutOfDateAURPackages():
         """
         Comparation function. Current impletementation is too naive:
             AUR: 1.0.0, Upstream: 1.0.0 -> latest
-            AUR: 1.0.0, Upstream: v1.0.1 -> NOT latest
-            AUR: 1.1.0, Upstream: ver1.0.1 -> NOT latest (not occured...)
+            AUR: 1.0.0, Upstream: 1.0.1 -> NOT latest
+            AUR: 1.1.0, Upstream: 1.0.1 -> NOT latest (maybe not occured)
         """
 
         comparable_aur_pkg_version = aur_pkg_version.split("-")[0]
@@ -91,11 +96,6 @@ class OutOfDateAURPackages():
             upstream_version = self._get_latest_upstream_version(package_name)
 
             if upstream_version:
-                version_with_prefix = re.match(r"^v(er)?(\\.)?([.0-9]*)",
-                                               upstream_version)
-                if version_with_prefix:
-                    upstream_version = version_with_prefix.groups()[-1]
-
                 if self._is_latest_version(package_version, upstream_version):
                     message = "{p} is up-to-date: {v}".format(
                         p=package_name, v=package_version

@@ -19,7 +19,7 @@ import sys
 
 from out_of_date_pkgs import OutOfDateAURPackages
 from pkgbuild import update_pkgbuild
-from slack import SlackWebhook
+from report import Report
 
 
 if "MAINTAINER" not in os.environ:
@@ -40,9 +40,9 @@ if __name__ == "__main__":
     SLACK_WEBHOOK_URL = os.environ["SLACK_WEBHOOK_URL"]
 
     AUR = OutOfDateAURPackages(MAINTAINER)
-    SLACK = SlackWebhook(SLACK_WEBHOOK_URL)
+    REPORT = Report(SLACK_WEBHOOK_URL)
 
     for pkgname, pkgver in AUR.get_out_of_date_packages():
         returncode, stdout, stderr = update_pkgbuild(pkgname, pkgver)
-        SLACK.post_package_upgraded(pkgname, pkgver,
-                                    returncode, stdout, stderr)
+        REPORT.post_package_upgraded(pkgname, pkgver,
+                                     returncode, stdout, stderr)

@@ -1,11 +1,10 @@
 import slackweb
 
 
-class SlackWebhook():
+class Report():
     def __init__(self, slack_webhook_url):
         self.slack = slackweb.Slack(url=slack_webhook_url)
-        self.message_template = """
-{h}
+        self.message_template = """{h}
 *stdout*
 ```{o}```
 *stderr*
@@ -25,6 +24,9 @@ class SlackWebhook():
                 "Succeeded to build package from PKGBUILD! "
                 "New version will be pushed to AUR."
             )
+            # stderr sometimes becomes too long and maybe not needed
+            # if OK to build
+            stderr = "Omitted"
 
         attachments = []
         attachment = {
