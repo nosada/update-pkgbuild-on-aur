@@ -1,9 +1,10 @@
 [Unit]
-Description=Update PKGBUILDs on AUR maintained by specific maintainer (on Docker container)
+Description=Update PKGBUILDs on AUR maintained by specific maintainer
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/docker run --rm IMAGE_NAME
+WorkingDirectory=REPOSITORY_LOCATION
+ExecStart=/usr/bin/docker-compose run app
 
 [Install]
 WantedBy=default.target

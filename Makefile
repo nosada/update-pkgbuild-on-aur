@@ -1,6 +1,7 @@
 SHELL := /bin/bash
 
 HOME_DIRECTORY=$(shell echo ${HOME})
+REPOSITORY_LOCATION=$(shell pwd)
 USER_SYSTEMD_LOCATION=${HOME_DIRECTORY}/.config/systemd/user
 
 TEMPLATE=update-pkgbuild-on-aur.service.tmpl
@@ -21,7 +22,7 @@ install: build-docker-image generate-systemd-service
 	install -Dm 644 ${NAME}.timer ${USER_SYSTEMD_LOCATION}
 
 generate-systemd-service: ${TEMPLATE}
-	sed -e 's|IMAGE_NAME|'${DOCKER_IMAGE_NAME}'|g' ${TEMPLATE} > ${NAME}.service
+	sed -e 's;REPOSITORY_LOCATION|'${REPOSITORY_LOCATION}'|g' ${TEMPLATE} > ${NAME}.service
 
 build-docker-image: ${FILES}
 	docker build . -t ${DOCKER_IMAGE_NAME}
