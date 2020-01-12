@@ -25,7 +25,7 @@ generate-systemd-service: ${TEMPLATE}
 	sed -e 's;REPOSITORY_LOCATION;'${REPOSITORY_LOCATION}';g' ${TEMPLATE} > ${NAME}.service
 
 build-docker-image: ${FILES}
-	docker build . -t ${DOCKER_IMAGE_NAME}
+	docker-compose build
 
 activate-systemd-services:
 	systemctl --user enable ${NAME}.service
