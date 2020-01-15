@@ -33,6 +33,7 @@ git clone "$AUR_GIT_ORIGIN" "$WORKING_DIR"
 cd "$WORKING_DIR" || exit 2
 
 update-pkgver "$PKGVER" 1
+sudo pacman -Sy
 makepkg -sf --noconfirm
 
 git push origin master
