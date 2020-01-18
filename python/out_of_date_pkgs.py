@@ -71,8 +71,7 @@ class OutOfDateAURPackages():
                 tags_url = repo_url + "/tags"
                 response = _get(tags_url)
                 if isinstance(response, list) and response:
-                    latest_tag = sorted(response, key=lambda tag: tag["name"])[-1]
-                    version = latest_tag["name"]
+                    version = response[0]["name"]
 
         return version
 
