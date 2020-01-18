@@ -70,8 +70,9 @@ class OutOfDateAURPackages():
             if response.get("message") == "Not Found":
                 tags_url = repo_url + "/tags"
                 response = _get(tags_url)
-                if response:
-                    version = response[0]["name"]
+                if isinstance(response, list):
+                    latest_tag = sorted(response, key=lambda tag: tag["name"])
+                    version = latest_tag["name"]
 
         return version
 

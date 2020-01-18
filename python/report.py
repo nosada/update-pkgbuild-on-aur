@@ -4,51 +4,52 @@ import slackweb
 class Report():
     def __init__(self, slack_webhook_url):
         self.slack = slackweb.Slack(url=slack_webhook_url)
-        self.message_template = """{h}
-*stdout*
+        self.message_template = """*stdout*
 ```{o}```
 *stderr*
 ```{e}```"""
 
     def post_package_upgraded(self, pkgname, pkgver,
                               returncode, stdout, stderr):
-        if isinstance(stdout, bytes):
-            stdout = stdout.decode()
-        if isinstance(stderr, bytes):
-            stderr = stderr.decode()
-
-        if returncode != 0:
-            header = "Failed to build package from PKGBUILD..."
-        else:
-            header = (
-                "Succeeded to build package from PKGBUILD! "
-                "New version will be pushed to AUR."
-            )
-            # stderr sometimes becomes too long and maybe not needed
-            # if OK to build
-            stderr = "Omitted"
-
         attachments = []
         attachment = {
-            "pretext": "Package Update Result",
-            "color": "warning",
+            "pretext": "Result of Updating Package",
             "fields": [
                 {
                     "title": "Package Name",
                     "value": pkgname,
-                    "short": False
+                    "short": True
                 },
                 {
                     "title": "Package Version in AUR",
                     "value": pkgver,
                     "short": True
-                }
+                },
+
             ]
         }
+
+        if isinstance(stdout, bytes):
+            stdout = stdout.decode()
+        if isinstance(stderr, bytes):
+            stderr = stderr.decode()
+
+        result = {
+            "title": "Result",
+            "short": True
+        }
+        if returncode == 0:
+            stderr = "Omitted"
+            attachment["color"] = "good"
+            result["value"] = "Succeeded"
+        else:
+            attachment["color"] = "danger"
+            result["value"] = "Failed"
+        attachment["fields"].append(result)
+
         attachments.append(attachment)
         self.slack.notify(attachments=attachments,
                           text=self.message_template.format(
-                              h=header,
                               o=stdout,
                               e=stderr
                           ),
