@@ -9,6 +9,35 @@ class Report():
 *stderr*
 ```{e}```"""
 
+    def post_package_version_warning(self, pkgname, pkgver,
+                                     upstream_version):
+        attachments = []
+        attachment = {
+            "pretext": "Upstream version seems to be updated.",
+            "color": "warning",
+            "fields": [
+                {
+                    "title": "Package Name",
+                    "value": pkgname,
+                    "short": False
+                },
+                {
+                    "title": "Package Version in AUR",
+                    "value": pkgver,
+                    "short": True
+                },
+                {
+                    "title": "Upstream Version",
+                    "value": upstream_version,
+                    "short": True
+                },
+            ]
+        }
+        attachments.append(attachment)
+        self.slack.notify(attachments=attachments,
+                          username="AUR package version checker",
+                          icon_emoji=":mag:")
+
     def post_package_upgraded(self, pkgname, pkgver,
                               returncode, stdout, stderr):
         attachments = []

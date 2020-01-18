@@ -106,7 +106,10 @@ class OutOfDateAURPackages():
                                "(current: {v})").format(p=package_name,
                                                         v=package_version,
                                                         u=upstream_version)
-                    self.out_of_date_packages[package_name] = upstream_version
+                    self.out_of_date_packages[package_name] = {
+                        "upstream": upstream_version,
+                        "package": package_version
+                    }
             else:
                 message = "Failed to get upstream version for {p}".format(
                     p=package_name

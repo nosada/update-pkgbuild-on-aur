@@ -45,7 +45,11 @@ if __name__ == "__main__":
     AUR = OutOfDateAURPackages(MAINTAINER)
     REPORT = Report(SLACK_WEBHOOK_URL)
 
-    for pkgname, pkgver in AUR.get_out_of_date_packages():
+    for pkgname, versions in AUR.get_out_of_date_packages():
+        pkgver = versions["package"]
+        upstream_version = versions["upstream"]
+        REPORT.post_package_version_warning_to_slack(pkgname, pkgver,
+                                                     upstream_version)
         returncode, stdout, stderr = update_pkgbuild(pkgname, pkgver)
         REPORT.post_package_upgraded(pkgname, pkgver,
                                      returncode, stdout, stderr)
