@@ -36,6 +36,7 @@ activate-systemd-services:
 deactivate-systemd-services:
 	systemctl --user disable ${NAME}.service
 	systemctl --user disable ${NAME}.timer
+	systemctl --user stop ${NAME}.timer
 	systemctl --user daemon-reload
 
 clean: ${NAME}.service
