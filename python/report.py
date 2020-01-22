@@ -63,6 +63,11 @@ class Report():
         if isinstance(stderr, bytes):
             stderr = stderr.decode()
 
+        if not stdout:
+            stdout = "No messages"
+        if not stderr:
+            stderr = "No messages"
+
         result = {
             "title": "Result",
             "short": True
