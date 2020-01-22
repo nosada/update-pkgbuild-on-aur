@@ -45,11 +45,17 @@ if __name__ == "__main__":
     AUR = OutOfDateAURPackages(MAINTAINER)
     REPORT = Report(SLACK_WEBHOOK_URL)
 
-    for pkgname, versions in AUR.get_out_of_date_packages():
-        pkgver = versions["package"]
+    UPDATING = []
+    for name, versions in AUR.get_out_of_date_packages():
+        current_version = versions["package"]
         upstream_version = versions["upstream"]
-        REPORT.post_package_version_warning(pkgname, pkgver,
-                                                     upstream_version)
-        returncode, stdout, stderr = update_pkgbuild(pkgname, pkgver)
-        REPORT.post_package_upgraded(pkgname, pkgver,
+        REPORT.post_package_version_warning(name, current_version,
+                                            upstream_version)
+        UPDATING.append(
+            (name, upstream_version)
+        )
+
+    for name, upstream_version in UPDATING:
+        returncode, stdout, stderr = update_pkgbuild(name, upstream_version)
+        REPORT.post_package_upgraded(name, current_version,
                                      returncode, stdout, stderr)
