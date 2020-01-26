@@ -57,5 +57,5 @@ if __name__ == "__main__":
 
     for name, upstream_version in UPDATING:
         returncode, stdout, stderr = update_pkgbuild(name, upstream_version)
-        REPORT.post_package_upgraded(name, current_version,
+        REPORT.post_package_upgraded(name, upstream_version,
                                      returncode, stdout, stderr)
