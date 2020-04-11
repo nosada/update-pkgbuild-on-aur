@@ -1,13 +1,10 @@
-import slackweb
+import slack
 
 
 class Report():
-    def __init__(self, slack_webhook_url):
-        self.slack = slackweb.Slack(url=slack_webhook_url)
-        self.message_template = """*stdout*
-```{o}```
-*stderr*
-```{e}```"""
+    def __init__(self, slack_token, slack_channel):
+        self.slack = slack.WebClient(token=slack_token)
+        self.channel = slack_channel
 
     def post_package_version_warning(self, pkgname, pkgver,
                                      upstream_version):
@@ -34,9 +31,10 @@ class Report():
             ]
         }
         attachments.append(attachment)
-        self.slack.notify(attachments=attachments,
-                          username="AUR package version checker",
-                          icon_emoji=":mag:")
+        self.slack.chat_postMessage(channel=self.channel,
+                                    attachments=attachments,
+                                    username="AUR package version update",
+                                    icon_emoji=":mag:")
 
     def post_package_upgraded(self, pkgname, pkgver,
                               returncode, stdout, stderr):
@@ -81,11 +79,19 @@ class Report():
             result["value"] = "Failed"
         attachment["fields"].append(result)
 
+        # Report update result
         attachments.append(attachment)
-        self.slack.notify(attachments=attachments,
-                          text=self.message_template.format(
-                              o=stdout,
-                              e=stderr
-                          ),
-                          username="AUR package update",
-                          icon_emoji=":up:")
+        self.slack.chat_postMessage(channel=self.channel,
+                                    attachments=attachments,
+                                    username="AUR package update",
+                                    icon_emoji=":up:")
+
+        # Upload makepkg logs
+        self.slack.files_upload(channels=self.channel,
+                                content=stdout,
+                                title="stdout",
+                                initial_comment="Logs on stdout")
+        self.slack.files_upload(channels=self.channel,
+                                content=stderr,
+                                title="stderr",
+                                initial_comment="Logs on stderr")
