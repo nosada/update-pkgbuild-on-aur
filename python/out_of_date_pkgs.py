@@ -1,5 +1,6 @@
 import re
 
+from bs4 import BeautifulSoup
 import requests
 
 
@@ -54,24 +55,27 @@ class OutOfDateAURPackages():
 
     @staticmethod
     def _get_version_from_github(author, repo_name):
-        def _get(url):
+        def _get(url, text=False):
+            if text:
+                return requests.get(url).text
             return requests.get(url).json()
 
-        version = None
-
-        repo_url = "https://api.github.com/repos/{a}/{r}".format(
+        url = "https://api.github.com/repos/{a}/{r}/releases/latest".format(
             a=author, r=repo_name)
-        release_url = repo_url + "/releases/latest"
 
-        response = _get(release_url)
+        version = None
         try:
-            version = response["tag_name"]
+            version = _get(url)["tag_name"]
         except KeyError:
-            if response.get("message") == "Not Found":
-                tags_url = repo_url + "/tags"
-                response = _get(tags_url)
-                if isinstance(response, list) and response:
-                    version = response[0]["name"]
+            # OK, we'll use ugly and dirty scraping
+            # Thanks to: https://stackoverflow.com/a/22735249
+            url = "https://github.com/{a}/{r}/releases".format(
+                a=author, r=repo_name)
+            release_page = BeautifulSoup(_get(url, text=True), "html.parser")
+            latest_release = release_page.find(
+                lambda tag: tag.name == "div"
+                and tag.get("class") == ["release-entry"])
+            version = re.sub(r"[ \n]", "", latest_release.find("a").text)
 
         return version
 
