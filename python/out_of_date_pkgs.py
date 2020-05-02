@@ -75,7 +75,8 @@ class OutOfDateAURPackages():
             latest_release = release_page.find(
                 lambda tag: tag.name == "div"
                 and tag.get("class") == ["release-entry"])
-            version = re.sub(r"[ \n]", "", latest_release.find("a").text)
+            if latest_release:
+                version = re.sub(r"[ \n]", "", latest_release.find("a").text)
 
         return version
 
