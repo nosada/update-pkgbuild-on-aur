@@ -5,8 +5,9 @@ This may be useful for PKGBUILD maintainers who maintain frequently-updating sof
 
 # Prerequirements
 - Arch User Repository (AUR) account
-- SSH keypair (public key must be added to your account in AUR)
-- Slack incoming webhook URL
+- SSH keypair
+  - Public key must be added to your AUR account
+- Slack App token
 
 # How to use
 1. Create AUR account at https://aur.archlinux.org/
