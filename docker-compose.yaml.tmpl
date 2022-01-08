@@ -1,4 +1,4 @@
-version: "3.7"
+version: "3.8"
 services:
   app:
     environment:
@@ -14,7 +14,4 @@ services:
         AUR_SSH_PRIV_KEY: "YOUR SSH PRIVATE KEY WHICH PUBLIC KEY IS IN AUR"
     image: local/update-pkgbuild-on-aur:latest
     restart: always
-networks:
-  default:
-    external:
-      name: bridge
+    network_mode: "bridge"
