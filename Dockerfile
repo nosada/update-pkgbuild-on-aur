@@ -1,5 +1,5 @@
 # Install required package to archlinux/base
-FROM archlinux/base as base
+FROM archlinux as base
 RUN pacman -Syu --noconfirm python python-pip \
 	pacman-contrib sudo \
 	git openssh \
