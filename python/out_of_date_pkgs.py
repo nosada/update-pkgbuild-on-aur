@@ -1,3 +1,4 @@
+from urllib.pase import quote
 import re
 
 from bs4 import BeautifulSoup
@@ -20,7 +21,7 @@ class OutOfDateAURPackages():
         return packages
 
     def _get_upstream_url(self, package_name):
-        rpc_query = "/rpc/?v=5&type=info&arg[]={p}".format(p=package_name)
+        rpc_query = "/rpc/?v=5&type=info&arg[]={p}".format(p=quote(package_name))
         response = requests.get(self.aur_endpoint + rpc_query).json()
 
         info = response["results"][0]
