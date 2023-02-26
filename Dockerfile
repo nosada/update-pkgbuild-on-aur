@@ -1,9 +1,8 @@
 # Install required package to archlinux/base
-FROM archlinux as base
+FROM archlinux:base-devel as base
 RUN pacman -Syu --noconfirm python python-pip \
 	pacman-contrib sudo \
-	git openssh \
-	base-devel devtools
+	git openssh devtools
 
 # Build application base image
 FROM base as prepared
