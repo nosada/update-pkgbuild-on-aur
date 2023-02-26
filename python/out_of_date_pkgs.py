@@ -1,4 +1,4 @@
-from urllib.pase import quote
+from urllib.parse import quote
 import re
 
 from bs4 import BeautifulSoup
