@@ -21,22 +21,22 @@ jobs:
             services:
               app:
                 environment:
-                  MAINTAINER: ${{ vars.MAINTAINER }}
-                  SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
-                  SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+                  MAINTAINER: "${{ vars.MAINTAINER }}"
+                  SLACK_TOKEN: "${{ secrets.SLACK_TOKEN }}"
+                  SLACK_CHANNEL: "${{ secrets.SLACK_CHANNEL }}"
                 build:
                   context: .
                   dockerfile: Dockerfile
                   args:
-                    GIT_USER_NAME: ${{ vars.GIT_USER_NAME }}
-                    GIT_USER_EMAIL: ${{ secrets.GIT_USER_EMAIL }}
-                    AUR_SSH_PRIV_KEY: ${{ secrets.AUR_SSH_PRIV_KEY }}
+                    GIT_USER_NAME: "${{ vars.GIT_USER_NAME }}"
+                    GIT_USER_EMAIL: "${{ secrets.GIT_USER_EMAIL }}"
+                    AUR_SSH_PRIV_KEY: "${{ secrets.AUR_SSH_PRIV_KEY }}"
                 image: local/update-pkgbuild-on-aur:latest
                 restart: always
-                network_mode: "bridge"
+                network_mode: bridge
           EOF
         shell: bash
       - name: Prepare containers
-        run: docker-compose build
+        run: docker compose build
       - name: Run containers
-        run: docker-compose up
+        run: docker compose up
