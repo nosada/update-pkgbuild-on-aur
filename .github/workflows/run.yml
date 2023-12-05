@@ -37,6 +37,6 @@ jobs:
           EOF
         shell: bash
       - name: Prepare containers
-        run: docker-compose build
+        run: docker compose build
       - name: Run containers
-        run: docker-compose up
+        run: docker compose up
