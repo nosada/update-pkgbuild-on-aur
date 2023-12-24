@@ -5,6 +5,10 @@ on:
   schedule:
     - cron: "0 12 * * *"
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   run:
     runs-on: ubuntu-latest
@@ -12,6 +16,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Prepare SSH secret key
+        run: |
+          echo "${{ secrets.AUR_SSH_PRIV_KEY }}" > privkey
       - name: Prepare docker-compose.yaml
         run: |
           cat << EOF > docker-compose.yaml
@@ -28,12 +35,10 @@ jobs:
                   args:
                     GIT_USER_NAME: "${{ vars.GIT_USER_NAME }}"
                     GIT_USER_EMAIL: "${{ secrets.GIT_USER_EMAIL }}"
-                    AUR_SSH_PRIV_KEY: "${{ secrets.AUR_SSH_PRIV_KEY }}"
                 image: local/update-pkgbuild-on-aur:latest
                 restart: always
                 network_mode: bridge
           EOF
-        shell: bash
       - name: Prepare containers
         run: docker compose build
       - name: Run containers
