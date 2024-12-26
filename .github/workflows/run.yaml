@@ -22,7 +22,6 @@ jobs:
       - name: Prepare docker-compose.yaml
         run: |
           cat << EOF > docker-compose.yaml
-            version: "3.8"
             services:
               app:
                 environment:
@@ -42,4 +41,4 @@ jobs:
       - name: Prepare containers
         run: docker compose build
       - name: Run containers
-        run: docker compose up
+        run: docker compose up --exit-code-from app
