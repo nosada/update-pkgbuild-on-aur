@@ -2,4 +2,4 @@ beautifulsoup4
 docopt
 pyyaml
 requests
-slackclient
+slack_sdk

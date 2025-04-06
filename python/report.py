@@ -1,9 +1,9 @@
-import slack
+from slack_sdk import WebClient
 
 
 class Report():
     def __init__(self, slack_token, slack_channel):
-        self.slack = slack.WebClient(token=slack_token)
+        self.slack = WebClient(token=slack_token)
         self.channel = slack_channel
 
     def post_package_version_warning(self, pkgname, pkgver,
