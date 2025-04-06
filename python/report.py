@@ -87,11 +87,11 @@ class Report():
                                     icon_emoji=":up:")
 
         # Upload makepkg logs
-        self.slack.files_upload(channels=self.channel,
+        self.slack.files_upload_v2(channels=self.channel,
                                 content=stdout,
                                 title="stdout",
                                 initial_comment="Logs on stdout")
-        self.slack.files_upload(channels=self.channel,
+        self.slack.files_upload_v2(channels=self.channel,
                                 content=stderr,
                                 title="stderr",
                                 initial_comment="Logs on stderr")
