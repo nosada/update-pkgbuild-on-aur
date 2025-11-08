@@ -32,6 +32,7 @@ class Report():
         }
         attachments.append(attachment)
         self.slack.chat_postMessage(channel=self.channel,
+                                    text=attachment["pretext"],
                                     attachments=attachments,
                                     username="AUR package version update",
                                     icon_emoji=":mag:")
@@ -82,6 +83,7 @@ class Report():
         # Report update result
         attachments.append(attachment)
         self.slack.chat_postMessage(channel=self.channel,
+                                    text=attachment["pretext"],
                                     attachments=attachments,
                                     username="AUR package update",
                                     icon_emoji=":up:")
