@@ -10,7 +10,6 @@ class Report():
                                      upstream_version):
         attachments = []
         attachment = {
-            "pretext": "Upstream version seems to be updated.",
             "color": "warning",
             "fields": [
                 {
@@ -31,8 +30,10 @@ class Report():
             ]
         }
         attachments.append(attachment)
+
+        text = "Upstream version seems to be updated."
         self.slack.chat_postMessage(channel=self.channel,
-                                    text=attachment["pretext"],
+                                    text=text,
                                     attachments=attachments,
                                     username="AUR package version update",
                                     icon_emoji=":mag:")
@@ -41,7 +42,6 @@ class Report():
                               returncode, stdout, stderr):
         attachments = []
         attachment = {
-            "pretext": "Result of Updating Package",
             "fields": [
                 {
                     "title": "Package Name",
@@ -82,18 +82,20 @@ class Report():
 
         # Report update result
         attachments.append(attachment)
+
+        text = "Result of Updating Package"
         self.slack.chat_postMessage(channel=self.channel,
-                                    text=attachment["pretext"],
+                                    text=text,
                                     attachments=attachments,
                                     username="AUR package update",
                                     icon_emoji=":up:")
 
         # Upload makepkg logs
-        self.slack.files_upload_v2(channels=self.channel,
+        self.slack.files_upload_v2(channels=[self.channel],
                                 content=stdout,
                                 title="stdout",
                                 initial_comment="Logs on stdout")
-        self.slack.files_upload_v2(channels=self.channel,
+        self.slack.files_upload_v2(channels=[self.channel],
                                 content=stderr,
                                 title="stderr",
                                 initial_comment="Logs on stderr")
