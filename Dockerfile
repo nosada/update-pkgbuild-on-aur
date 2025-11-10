@@ -27,6 +27,7 @@ ARG "GIT_USER_NAME"
 ARG "GIT_USER_EMAIL"
 ARG "AUR_SSH_PRIV_KEY"
 
+USER "$USER"
 RUN mkdir -p "$BASE_DIR/.ssh/" \
 	&& echo -e "$AUR_SSH_PRIV_KEY" > "$BASE_DIR/.ssh/privkey" \
 	&& chmod 600 "$BASE_DIR/.ssh/privkey" \
