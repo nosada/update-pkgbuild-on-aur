@@ -27,12 +27,9 @@ ARG "GIT_USER_NAME"
 ARG "GIT_USER_EMAIL"
 ARG "AUR_SSH_PRIV_KEY"
 
-USER "$USER"
 RUN mkdir -p "$BASE_DIR/.ssh/" \
 	&& echo -e "$AUR_SSH_PRIV_KEY" > "$BASE_DIR/.ssh/privkey" \
-	&& chmod 600 "$BASE_DIR/.ssh/privkey" \
-	&& git config --global user.email "$GIT_USER_EMAIL" \
-	&& git config --global user.name "$GIT_USER_NAME"
+	&& chmod 600 "$BASE_DIR/.ssh/privkey"
 
 COPY --chown="$USER" --chmod=0600 privke[y] ${BASE_DIR}/.ssh/privkey
 

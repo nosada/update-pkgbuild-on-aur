@@ -28,12 +28,11 @@ jobs:
                   MAINTAINER: "${{ vars.MAINTAINER }}"
                   SLACK_TOKEN: "${{ secrets.SLACK_TOKEN }}"
                   SLACK_CHANNEL: "${{ secrets.SLACK_CHANNEL }}"
+                  GIT_USER_NAME: "${{ vars.GIT_USER_NAME }}"
+                  GIT_USER_EMAIL: "${{ secrets.GIT_USER_EMAIL }}"
                 build:
                   context: .
                   dockerfile: Dockerfile
-                  args:
-                    GIT_USER_NAME: "${{ vars.GIT_USER_NAME }}"
-                    GIT_USER_EMAIL: "${{ secrets.GIT_USER_EMAIL }}"
                 image: local/update-pkgbuild-on-aur:latest
                 restart: always
                 network_mode: bridge

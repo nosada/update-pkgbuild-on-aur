@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+function prepare-git-config() {
+	git config --global user.email "$GIT_USER_EMAIL"
+	git config --global user.name "$GIT_USER_NAME"
+}
+
 function update-pkgver() {
 	PKGVER=$1
 	PKGREL=$2
@@ -25,6 +30,8 @@ else
 	echo "Usage: $0 PACKAGE_NAME NEW_PKGVER" > /dev/stderr
 	exit 1
 fi
+
+prepare-git-config
 
 WORKING_DIR=$(mktemp -d /tmp/update-pkgbuild-XXXX)
 AUR_GIT_ORIGIN="ssh://aur@aur.archlinux.org/$PKGNAME.git"
